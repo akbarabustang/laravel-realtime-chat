@@ -19,14 +19,14 @@
         <div class="row" id="app">
             <div class="offset-3 col-6">
                 <li class="list-group-item active">Chat Room</li>
-                <ul class="list-group">
+                <ul class="list-group" v-chat-scroll>
                     <message-component
                         v-for="(value, index) in chat.message"
                         :key="index"
-                        v-text="value"
+                        color="warning"  
+                        v-bind:text = "value"
                     >
-                    </message-component>
-                    </li>
+                </message-component>
                 </ul>
                 <input type="text" name="" id="" class="form-control" placeholder="type your message" v-model="message" @keyup.enter="send">
             </div>

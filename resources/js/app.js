@@ -7,6 +7,9 @@
 require('./bootstrap');
 
 window.Vue = require('vue').default;
+import VueChatScroll from 'vue-chat-scroll';
+
+Vue.use(VueChatScroll);
 
 Vue.component('message-component', require('./components/MessageComponent.vue').default);
 
@@ -23,7 +26,7 @@ const app = new Vue({
       if (this.message) {
         this.chat.message.push(this.message)
         this.message = ''
-        
+
         console.log(this.chat.message)
       }
     }
