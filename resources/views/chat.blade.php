@@ -7,18 +7,29 @@
     <meta name="csrf-token" content="{{ csrf_token() }}" >
     <title>Laravel Realtime Chat</title>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <style>
+        .list-group {
+            overflow: scroll;
+            height: 250px;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <div class="row" id="app">
-            <ul class="list-group offset-4 col-4">
+            <div class="offset-3 col-6">
                 <li class="list-group-item active">Chat Room</li>
-                <li class="list-group-item">Hola</li>
-                <li class="list-group-item">Hola</li>
-                <li class="list-group-item">Hola</li>
-                <li class="list-group-item">Hola</li>
-                <input type="text" name="" id="" class="form-control" placeholder="type your message">
-            </ul>
+                <ul class="list-group">
+                    <message-component
+                        v-for="(value, index) in chat.message"
+                        :key="index"
+                        v-text="value"
+                    >
+                    </message-component>
+                    </li>
+                </ul>
+                <input type="text" name="" id="" class="form-control" placeholder="type your message" v-model="message" @keyup.enter="send">
+            </div>
         </div>
     </div>
     
