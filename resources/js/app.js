@@ -9,10 +9,12 @@ require('./bootstrap');
 window.Vue = require('vue').default;
 
 import axios from 'axios';
-
+import Toaster from 'v-toaster'
+import 'v-toaster/dist/v-toaster.css'
 import VueChatScroll from 'vue-chat-scroll';
 
 Vue.use(VueChatScroll);
+Vue.use(Toaster, {timeout: 5000})
 Vue.prototype.$userId = document.querySelector("meta[name='user']").getAttribute('content');
 Vue.component('message-component', require('./components/MessageComponent.vue').default);
 
@@ -26,7 +28,8 @@ const app = new Vue({
       colors: [],
       time: []
     },
-    typing: ''
+    typing: '',
+    onlineUser: 0
   },
   watch: {
     message() {
@@ -65,18 +68,32 @@ const app = new Vue({
   },
   mounted() {
     window.Echo.private('chat')
-    .listen('.chat-created', (e) => {
-      this.chat.message.push(e.message)
-      this.chat.user.push(e.user)
-      this.chat.colors.push('warning')
-      this.chat.time.push(this.getTime())
-    })
-    .listenForWhisper('typing', (e) => {
-      if (e.msg) {
-        this.typing = e.user + ' is typing..'
-      } else {
-        this.typing = ''
-      }
-    })
+                .listen('.chat-created', (e) => {
+                  this.chat.message.push(e.message)
+                  this.chat.user.push(e.user)
+                  this.chat.colors.push('warning')
+                  this.chat.time.push(this.getTime())
+                })
+                .listenForWhisper('typing', (e) => {
+                  if (e.msg) {
+                    this.typing = e.user + ' is typing..'
+                  } else {
+                    this.typing = ''
+                  }
+                })
+  
+    window.Echo.join('chat')
+                .here((users) => {
+                  this.onlineUser = users.length
+                })
+                .joining((user) => {
+                  this.onlineUser += 1
+                  this.$toaster.success(user.name + ' joined the room')
+                })
+                .leaving((user) => {
+                  this.onlineUser -= 1
+                  this.$toaster.warning(user.name + ' left the room')
+                })
   }
+
 });
