@@ -1853,7 +1853,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: ['color', 'text', 'user'],
+  props: ['color', 'text', 'user', 'time'],
   computed: {
     className: function className() {
       return 'list-group-item-' + this.color;
@@ -1896,6 +1896,7 @@ window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js"
 
 
 Vue.use((vue_chat_scroll__WEBPACK_IMPORTED_MODULE_1___default()));
+Vue.prototype.$userId = document.querySelector("meta[name='user']").getAttribute('content');
 Vue.component('message-component', __webpack_require__(/*! ./components/MessageComponent.vue */ "./resources/js/components/MessageComponent.vue").default);
 var app = new Vue({
   el: '#app',
@@ -1904,7 +1905,16 @@ var app = new Vue({
     chat: {
       message: [],
       user: [],
-      colors: []
+      colors: [],
+      time: []
+    },
+    typing: ''
+  },
+  watch: {
+    message: function message() {
+      window.Echo["private"]('chat').whisper('typing', {
+        msg: this.message
+      });
     }
   },
   methods: {
@@ -1915,15 +1925,20 @@ var app = new Vue({
         this.chat.message.push(this.message);
         this.chat.user.push('you');
         this.chat.colors.push('success');
+        this.chat.time.push(this.getTime());
         axios__WEBPACK_IMPORTED_MODULE_0___default().post('send', {
           message: this.message
         }).then(function (res) {
-          // console.log(res)
+          console.log(res);
           _this.message = '';
         })["catch"](function (err) {
           console.log(err);
         }); // console.log(this.chat.message)
       }
+    },
+    getTime: function getTime() {
+      var time = new Date();
+      return time.getHours() + ':' + time.getMinutes();
     }
   },
   mounted: function mounted() {
@@ -1936,7 +1951,14 @@ var app = new Vue({
 
       _this2.chat.colors.push('warning');
 
-      console.log(e);
+      _this2.chat.time.push(_this2.getTime());
+    }).listenForWhisper('typing', function (e) {
+      if (e.msg) {
+        _this2.typing = _this2.$userId + ' is typing..';
+        console.log(_this2.typing);
+      } else {
+        _this2.typing = '';
+      }
     });
   }
 });
@@ -43676,7 +43698,8 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", [
     _c("li", { staticClass: "list-group-item", class: _vm.className }, [
-      _vm._v(_vm._s(_vm.text))
+      _c("small", [_vm._v(_vm._s(_vm.time))]),
+      _vm._v(" " + _vm._s(_vm.text))
     ]),
     _vm._v(" "),
     _c("small", { staticClass: "badge float-right", class: _vm.badgeClass }, [

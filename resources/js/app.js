@@ -13,7 +13,7 @@ import axios from 'axios';
 import VueChatScroll from 'vue-chat-scroll';
 
 Vue.use(VueChatScroll);
-
+Vue.prototype.$userId = document.querySelector("meta[name='user']").getAttribute('content');
 Vue.component('message-component', require('./components/MessageComponent.vue').default);
 
 const app = new Vue({
@@ -23,7 +23,17 @@ const app = new Vue({
     chat: {
       message: [],
       user: [],
-      colors: []
+      colors: [],
+      time: []
+    },
+    typing: ''
+  },
+  watch: {
+    message() {
+      window.Echo.private('chat')
+                  .whisper('typing', {
+                    msg: this.message
+                  })
     }
   },
   methods: {
@@ -32,12 +42,13 @@ const app = new Vue({
         this.chat.message.push(this.message)
         this.chat.user.push('you')
         this.chat.colors.push('success')
+        this.chat.time.push(this.getTime())
 
         axios.post('send', {
           message: this.message
         })
         .then(res => {
-          // console.log(res)
+          console.log(res)
           this.message = ''
         })
         .catch(err => {
@@ -46,15 +57,28 @@ const app = new Vue({
 
         // console.log(this.chat.message)
       }
+    },
+
+    getTime() {
+      let time = new Date()
+      return time.getHours()+':'+ time.getMinutes()
     }
   },
   mounted() {
     window.Echo.private('chat')
-    .listen('.chat-created', e => {
+    .listen('.chat-created', (e) => {
       this.chat.message.push(e.message)
       this.chat.user.push(e.user)
       this.chat.colors.push('warning')
-      console.log(e)
-    });
+      this.chat.time.push(this.getTime())
+    })
+    .listenForWhisper('typing', (e) => {
+      if (e.msg) {
+        this.typing = this.$userId + ' is typing..'
+        console.log(this.typing)
+      } else {
+        this.typing = ''
+      }
+    })
   }
 });

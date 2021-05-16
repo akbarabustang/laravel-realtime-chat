@@ -1,6 +1,6 @@
 <template>
   <div>
-    <li class="list-group-item" :class="className" >{{ text }}</li>
+    <li class="list-group-item" :class="className" ><small>{{time}}</small> {{ text }}</li>
     <small class="badge float-right" :class="badgeClass">{{user}}</small>
   </div>
 </template>
@@ -10,7 +10,8 @@
     props: [
       'color',
       'text',
-      'user'
+      'user',
+      'time'
     ],
     computed: {
       className() {
