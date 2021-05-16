@@ -8,15 +8,15 @@ require('./bootstrap');
 
 window.Vue = require('vue').default;
 
-import Echo from 'laravel-echo';
+// import Echo from 'laravel-echo';
 
-window.Echo = new Echo({
-  broadcaster: 'pusher',
-  key: process.env.MIX_PUSHER_APP_KEY,
-  cluster: process.env.MIX_PUSHER_APP_CLUSTER,
-  forceTLS: true,
-  encrypted: true
-});
+// window.Echo = new Echo({
+//   broadcaster: 'pusher',
+//   key: process.env.MIX_PUSHER_APP_KEY,
+//   cluster: process.env.MIX_PUSHER_APP_CLUSTER,
+//   forceTLS: true,
+//   encrypted: true
+// });
 
 
 import VueChatScroll from 'vue-chat-scroll';
@@ -44,8 +44,8 @@ const app = new Vue({
     }
   },
   mounted() {
-    window.Echo.private('chat')
-    .listen('.Chat', (e) => {
+    window.Echo.channel('chat')
+    .listen('.chat-created', e => {
         console.log(e)
     });
   }

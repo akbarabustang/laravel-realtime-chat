@@ -37,4 +37,8 @@ class Chat implements ShouldBroadcast
     {
         return new PrivateChannel('chat');
     }
+
+    public function broadcastAs(){
+        return 'chat-created';
+    }
 }
