@@ -1913,7 +1913,8 @@ var app = new Vue({
   watch: {
     message: function message() {
       window.Echo["private"]('chat').whisper('typing', {
-        msg: this.message
+        msg: this.message,
+        user: this.$userId
       });
     }
   },
@@ -1933,7 +1934,7 @@ var app = new Vue({
           _this.message = '';
         })["catch"](function (err) {
           console.log(err);
-        }); // console.log(this.chat.message)
+        });
       }
     },
     getTime: function getTime() {
@@ -1954,8 +1955,7 @@ var app = new Vue({
       _this2.chat.time.push(_this2.getTime());
     }).listenForWhisper('typing', function (e) {
       if (e.msg) {
-        _this2.typing = _this2.$userId + ' is typing..';
-        console.log(_this2.typing);
+        _this2.typing = e.user + ' is typing..';
       } else {
         _this2.typing = '';
       }

@@ -32,7 +32,8 @@ const app = new Vue({
     message() {
       window.Echo.private('chat')
                   .whisper('typing', {
-                    msg: this.message
+                    msg: this.message,
+                    user: this.$userId
                   })
     }
   },
@@ -54,8 +55,6 @@ const app = new Vue({
         .catch(err => {
           console.log(err)
         })
-
-        // console.log(this.chat.message)
       }
     },
 
@@ -74,8 +73,7 @@ const app = new Vue({
     })
     .listenForWhisper('typing', (e) => {
       if (e.msg) {
-        this.typing = this.$userId + ' is typing..'
-        console.log(this.typing)
+        this.typing = e.user + ' is typing..'
       } else {
         this.typing = ''
       }
