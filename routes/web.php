@@ -20,6 +20,8 @@ Route::get('/', function () {
 
 Route::get('/chat', [ChatController::class, 'chat']);
 Route::post('/send', [ChatController::class, 'send']);
+Route::post('/save-session', [ChatController::class, 'saveToSession']);
+Route::get('/saved-session', [ChatController::class, 'savedSession']);
 
 Auth::routes();
 

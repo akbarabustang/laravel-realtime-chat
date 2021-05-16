@@ -1940,7 +1940,8 @@ var app = new Vue({
         axios__WEBPACK_IMPORTED_MODULE_0___default().post('send', {
           message: this.message
         }).then(function (res) {
-          console.log(res);
+          _this.saveToSession();
+
           _this.message = '';
         })["catch"](function (err) {
           console.log(err);
@@ -1950,36 +1951,61 @@ var app = new Vue({
     getTime: function getTime() {
       var time = new Date();
       return time.getHours() + ':' + time.getMinutes();
+    },
+    saveToSession: function saveToSession() {
+      axios__WEBPACK_IMPORTED_MODULE_0___default().post('save-session', {
+        session: this.chat
+      }).then(function (res) {
+        console.log(res);
+      })["catch"](function (err) {
+        console.log(err);
+      });
+    },
+    getSavedSession: function getSavedSession() {
+      var _this2 = this;
+
+      axios__WEBPACK_IMPORTED_MODULE_0___default().get('/saved-session').then(function (res) {
+        console.log(res);
+
+        if (res.data) {
+          _this2.chat = res.data;
+        }
+      })["catch"](function (err) {
+        console.log(err);
+      });
     }
   },
   mounted: function mounted() {
-    var _this2 = this;
+    var _this3 = this;
 
+    this.getSavedSession();
     window.Echo["private"]('chat').listen('.chat-created', function (e) {
-      _this2.chat.message.push(e.message);
+      _this3.chat.message.push(e.message);
 
-      _this2.chat.user.push(e.user);
+      _this3.chat.user.push(e.user);
 
-      _this2.chat.colors.push('warning');
+      _this3.chat.colors.push('warning');
 
-      _this2.chat.time.push(_this2.getTime());
+      _this3.chat.time.push(_this3.getTime());
+
+      _this3.saveToSession();
     }).listenForWhisper('typing', function (e) {
       if (e.msg) {
-        _this2.typing = e.user + ' is typing..';
+        _this3.typing = e.user + ' is typing..';
       } else {
-        _this2.typing = '';
+        _this3.typing = '';
       }
     });
     window.Echo.join('chat').here(function (users) {
-      _this2.onlineUser = users.length;
+      _this3.onlineUser = users.length;
     }).joining(function (user) {
-      _this2.onlineUser += 1;
+      _this3.onlineUser += 1;
 
-      _this2.$toaster.success(user.name + ' joined the room');
+      _this3.$toaster.success(user.name + ' joined the room');
     }).leaving(function (user) {
-      _this2.onlineUser -= 1;
+      _this3.onlineUser -= 1;
 
-      _this2.$toaster.warning(user.name + ' left the room');
+      _this3.$toaster.warning(user.name + ' left the room');
     });
   }
 });

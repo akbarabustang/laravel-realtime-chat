@@ -52,7 +52,7 @@ const app = new Vue({
           message: this.message
         })
         .then(res => {
-          console.log(res)
+          this.saveToSession()
           this.message = ''
         })
         .catch(err => {
@@ -64,15 +64,43 @@ const app = new Vue({
     getTime() {
       let time = new Date()
       return time.getHours()+':'+ time.getMinutes()
+    },
+
+    saveToSession() {
+      axios.post('save-session', {
+        session: this.chat
+      })
+      .then(res => {
+        console.log(res)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+    },
+
+    getSavedSession() {
+      axios.get('/saved-session')
+            .then(res => {
+              console.log(res)
+              if (res.data) {
+                this.chat = res.data
+              }
+            })
+            .catch(err => {
+              console.log(err)
+            })
     }
   },
   mounted() {
+    this.getSavedSession()
+
     window.Echo.private('chat')
                 .listen('.chat-created', (e) => {
                   this.chat.message.push(e.message)
                   this.chat.user.push(e.user)
                   this.chat.colors.push('warning')
                   this.chat.time.push(this.getTime())
+                  this.saveToSession()
                 })
                 .listenForWhisper('typing', (e) => {
                   if (e.msg) {
