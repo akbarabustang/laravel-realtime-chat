@@ -23,8 +23,9 @@
                     <message-component
                         v-for="(value, index) in chat.message"
                         :key="index"
-                        color="warning"  
-                        v-bind:text = "value"
+                        :color="chat.colors[index]"
+                        :text = "value"
+                        :user = "chat.user[index]"
                     >
                 </message-component>
                 </ul>

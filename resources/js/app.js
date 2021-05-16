@@ -8,16 +8,7 @@ require('./bootstrap');
 
 window.Vue = require('vue').default;
 
-// import Echo from 'laravel-echo';
-
-// window.Echo = new Echo({
-//   broadcaster: 'pusher',
-//   key: process.env.MIX_PUSHER_APP_KEY,
-//   cluster: process.env.MIX_PUSHER_APP_CLUSTER,
-//   forceTLS: true,
-//   encrypted: true
-// });
-
+import axios from 'axios';
 
 import VueChatScroll from 'vue-chat-scroll';
 
@@ -30,23 +21,40 @@ const app = new Vue({
   data: {
     message: '',
     chat: {
-      message: []
+      message: [],
+      user: [],
+      colors: []
     }
   },
   methods: {
     send() {
       if (this.message) {
         this.chat.message.push(this.message)
-        this.message = ''
+        this.chat.user.push('you')
+        this.chat.colors.push('success')
 
-        console.log(this.chat.message)
+        axios.post('send', {
+          message: this.message
+        })
+        .then(res => {
+          // console.log(res)
+          this.message = ''
+        })
+        .catch(err => {
+          console.log(err)
+        })
+
+        // console.log(this.chat.message)
       }
     }
   },
   mounted() {
-    window.Echo.channel('chat')
+    window.Echo.private('chat')
     .listen('.chat-created', e => {
-        console.log(e)
+      this.chat.message.push(e.message)
+      this.chat.user.push(e.user)
+      this.chat.colors.push('warning')
+      console.log(e)
     });
   }
 });

@@ -1,7 +1,7 @@
 <template>
   <div>
     <li class="list-group-item" :class="className" >{{ text }}</li>
-    <small class="badge float-right" :class="badgeClass">you</small>
+    <small class="badge float-right" :class="badgeClass">{{user}}</small>
   </div>
 </template>
 
@@ -9,7 +9,8 @@
   export default {
     props: [
       'color',
-      'text'
+      'text',
+      'user'
     ],
     computed: {
       className() {

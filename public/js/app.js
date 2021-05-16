@@ -1853,7 +1853,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: ['color', 'text'],
+  props: ['color', 'text', 'user'],
   computed: {
     className: function className() {
       return 'list-group-item-' + this.color;
@@ -1881,8 +1881,10 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var vue_chat_scroll__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue-chat-scroll */ "./node_modules/vue-chat-scroll/dist/vue-chat-scroll.js");
-/* harmony import */ var vue_chat_scroll__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue_chat_scroll__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var vue_chat_scroll__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-chat-scroll */ "./node_modules/vue-chat-scroll/dist/vue-chat-scroll.js");
+/* harmony import */ var vue_chat_scroll__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vue_chat_scroll__WEBPACK_IMPORTED_MODULE_1__);
 /**
  * First we will load all of this project's JavaScript dependencies which
  * includes Vue and other libraries. It is a great starting point when
@@ -1890,37 +1892,50 @@ __webpack_require__.r(__webpack_exports__);
  */
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
-window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js").default; // import Echo from 'laravel-echo';
-// window.Echo = new Echo({
-//   broadcaster: 'pusher',
-//   key: process.env.MIX_PUSHER_APP_KEY,
-//   cluster: process.env.MIX_PUSHER_APP_CLUSTER,
-//   forceTLS: true,
-//   encrypted: true
-// });
+window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js").default;
 
 
-Vue.use((vue_chat_scroll__WEBPACK_IMPORTED_MODULE_0___default()));
+Vue.use((vue_chat_scroll__WEBPACK_IMPORTED_MODULE_1___default()));
 Vue.component('message-component', __webpack_require__(/*! ./components/MessageComponent.vue */ "./resources/js/components/MessageComponent.vue").default);
 var app = new Vue({
   el: '#app',
   data: {
     message: '',
     chat: {
-      message: []
+      message: [],
+      user: [],
+      colors: []
     }
   },
   methods: {
     send: function send() {
+      var _this = this;
+
       if (this.message) {
         this.chat.message.push(this.message);
-        this.message = '';
-        console.log(this.chat.message);
+        this.chat.user.push('you');
+        this.chat.colors.push('success');
+        axios__WEBPACK_IMPORTED_MODULE_0___default().post('send', {
+          message: this.message
+        }).then(function (res) {
+          // console.log(res)
+          _this.message = '';
+        })["catch"](function (err) {
+          console.log(err);
+        }); // console.log(this.chat.message)
       }
     }
   },
   mounted: function mounted() {
-    window.Echo.channel('chat').listen('.chat-created', function (e) {
+    var _this2 = this;
+
+    window.Echo["private"]('chat').listen('.chat-created', function (e) {
+      _this2.chat.message.push(e.message);
+
+      _this2.chat.user.push(e.user);
+
+      _this2.chat.colors.push('warning');
+
       console.log(e);
     });
   }
@@ -43665,7 +43680,7 @@ var render = function() {
     ]),
     _vm._v(" "),
     _c("small", { staticClass: "badge float-right", class: _vm.badgeClass }, [
-      _vm._v("you")
+      _vm._v(_vm._s(_vm.user))
     ])
   ])
 }
