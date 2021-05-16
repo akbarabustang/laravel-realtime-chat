@@ -2,7 +2,7 @@
 
 namespace App\Events;
 
-use App\Model\User;
+use App\Models\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -25,7 +25,7 @@ class Chat implements ShouldBroadcast
     public function __construct($message, User $user)
     {
         $this->message = $message;
-        $this->user = $user;
+        $this->user = $user->name;
     }
 
     /**

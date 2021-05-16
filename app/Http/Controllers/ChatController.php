@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Model\User;
-// use App\Events\Chat
+use Auth;
+use App\Models\User;
+use App\Events\Chat;
 use Illuminate\Http\Request;
 
 class ChatController extends Controller
@@ -12,16 +13,18 @@ class ChatController extends Controller
     {
         $this->middleware('auth');
     }
-    
+
     public function chat()
     {
         return view('chat');
     }
 
-    public function send(Request $request)
+    public function send()
     {
+        $msg = 'hai';
         $user = User::find(Auth::id());
 
-        event(new Chat($request->message, $user));
+        $d = event(new Chat('haii',$user));
+        dd($d);
     }
 }
