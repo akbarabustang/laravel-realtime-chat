@@ -7,6 +7,18 @@
 require('./bootstrap');
 
 window.Vue = require('vue').default;
+
+import Echo from 'laravel-echo';
+
+window.Echo = new Echo({
+  broadcaster: 'pusher',
+  key: process.env.MIX_PUSHER_APP_KEY,
+  cluster: process.env.MIX_PUSHER_APP_CLUSTER,
+  forceTLS: true,
+  encrypted: true
+});
+
+
 import VueChatScroll from 'vue-chat-scroll';
 
 Vue.use(VueChatScroll);
@@ -30,5 +42,11 @@ const app = new Vue({
         console.log(this.chat.message)
       }
     }
+  },
+  mounted() {
+    window.Echo.private('chat')
+    .listen('.Chat', (e) => {
+        console.log(e)
+    });
   }
 });
