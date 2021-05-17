@@ -27,13 +27,11 @@ class ChatController extends Controller
 
     public function saveToSession(Request $request)
     {
-        session()->forget('chat');
         session()->put('chat', $request->session);
     }
 
     public function savedSession()
     {
         return session()->get('chat');
-        // return session()->get('chat');
     }
 }
