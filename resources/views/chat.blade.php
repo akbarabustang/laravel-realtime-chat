@@ -39,7 +39,8 @@
                     >
                 </message-component>
                 </ul>
-                <input type="text" name="" id="" class="form-control" placeholder="type your message" v-model="message" @keyup.enter="send">
+                <input type="text" name="" id="" class="form-control" placeholder="type your message" v-model="message" @keyup.enter="send"> <br>
+                <button class="btn btn-primary btn-sm" v-on:click="send" >Send</button>
             </div>
         </div>
     </div>
