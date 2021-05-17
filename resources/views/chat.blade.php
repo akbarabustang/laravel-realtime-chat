@@ -20,13 +20,11 @@
         <div class="row" id="app">
             <div class="offset-4 col-4 offset-sm-1 col-sm-10">
                 <li class="list-group-item active">Chat Room <br>
-                    {{-- fix this later --}}
-                    <small>Online : @{{ onlineUser}}</small>
+                    User Online: <small v-html="onlineUser"></small>
                 </li>
                 
                 <div v-if="typing">
-                    {{-- fix this later --}}
-                    <p class="badge badge-pill badge-primary">@{{typing}} </p>
+                    <p class="badge badge-pill badge-primary" v-html="typing"></p>
                 </div>
                 <ul class="list-group" v-chat-scroll>
                     <message-component
